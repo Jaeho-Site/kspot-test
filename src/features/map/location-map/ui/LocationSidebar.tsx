@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MapPin, Star, Clock, Camera, Navigation, Filter } from "lucide-react";
 import { OptimizedImage } from "@/shared/ui";
 
@@ -36,33 +36,37 @@ export function LocationSidebar({
   const [searchTerm, setSearchTerm] = useState("");
 
   // 필터링된 위치들 - 이름, 주소, 태그, 장면 설명에서 검색
-  const filteredLocations = locations.filter((location) => {
-    const searchLower = searchTerm.toLowerCase();
-    const matchesName = location.name.toLowerCase().includes(searchLower);
-    const matchesAddress = location.address.toLowerCase().includes(searchLower);
-    const matchesDescription = location.description
-      .toLowerCase()
-      .includes(searchLower);
-    const matchesScene = location.sceneDescription
-      .toLowerCase()
-      .includes(searchLower);
-    const matchesTags = location.tags.some((tag) =>
-      tag.toLowerCase().includes(searchLower)
-    );
+  const filteredLocations = useMemo(() => {
+    return locations.filter((location) => {
+      const searchLower = searchTerm.toLowerCase();
+      const matchesName = location.name.toLowerCase().includes(searchLower);
+      const matchesAddress = location.address
+        .toLowerCase()
+        .includes(searchLower);
+      const matchesDescription = location.description
+        .toLowerCase()
+        .includes(searchLower);
+      const matchesScene = location.sceneDescription
+        .toLowerCase()
+        .includes(searchLower);
+      const matchesTags = location.tags.some((tag) =>
+        tag.toLowerCase().includes(searchLower)
+      );
 
-    // "오징어게임", "오징어 게임" 등 다양한 검색어 처리
-    const isSquidGameSearch =
-      searchLower.includes("오징어") || searchLower.includes("게임");
+      // "오징어게임", "오징어 게임" 등 다양한 검색어 처리
+      const isSquidGameSearch =
+        searchLower.includes("오징어") || searchLower.includes("게임");
 
-    return (
-      matchesName ||
-      matchesAddress ||
-      matchesDescription ||
-      matchesScene ||
-      matchesTags ||
-      isSquidGameSearch
-    );
-  });
+      return (
+        matchesName ||
+        matchesAddress ||
+        matchesDescription ||
+        matchesScene ||
+        matchesTags ||
+        isSquidGameSearch
+      );
+    });
+  }, [locations, searchTerm]);
 
   // 필터링된 결과가 변경될 때마다 부모 컴포넌트에 알림
   useEffect(() => {

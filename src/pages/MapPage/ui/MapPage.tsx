@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Share2, Download, RotateCcw } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Share2, Download, RotateCcw } from "lucide-react";
 import {
   KakaoMap,
   LocationSidebar,
@@ -65,7 +64,6 @@ const squidGameLocations = [
 ];
 
 export function MapPage() {
-  const navigate = useNavigate();
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(
     null
   );
@@ -104,35 +102,27 @@ export function MapPage() {
     setFilteredLocationIds([]);
   };
 
-  const handleFilteredLocationsChange = (locationIds: number[]) => {
+  const handleFilteredLocationsChange = useCallback((locationIds: number[]) => {
     setFilteredLocationIds(locationIds);
-  };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
+    <div className="h-full bg-gray-100">
+      {/* Map Controls */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Left */}
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => navigate(-1)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5 text-gray-700" />
-              </button>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">
-                  🎬 오징어 게임 촬영지 지도
-                </h1>
-                <p className="text-sm text-gray-600">
-                  {squidGameLocations.length}개의 촬영지를 탐험해보세요
-                </p>
-              </div>
+          <div className="flex items-center justify-between h-12">
+            {/* Title */}
+            <div>
+              <h1 className="text-lg font-bold text-gray-900">
+                🎬 오징어 게임 촬영지 지도
+              </h1>
+              <p className="text-sm text-gray-600">
+                {squidGameLocations.length}개의 촬영지를 탐험해보세요
+              </p>
             </div>
 
-            {/* Right */}
+            {/* Controls */}
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowSidebar(!showSidebar)}
@@ -167,7 +157,7 @@ export function MapPage() {
       </div>
 
       {/* Main Content */}
-      <div className="flex h-[calc(100vh-4rem)]">
+      <div className="flex h-[calc(100vh-11rem)]">
         {/* Sidebar */}
         {showSidebar && (
           <div className="w-full lg:w-96 lg:flex-shrink-0 border-r border-gray-200 overflow-hidden">
