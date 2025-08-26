@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Star, MapPin, Clock, Users, ArrowRight, Heart } from "lucide-react";
 
 const POPULAR_CONTENTS = [
@@ -78,6 +79,7 @@ const POPULAR_CONTENTS = [
 ];
 
 export function PopularContents() {
+  const navigate = useNavigate();
   const [selectedContent, setSelectedContent] = useState<number | null>(null);
   const [likedContents, setLikedContents] = useState<Set<number>>(new Set());
 
@@ -226,7 +228,13 @@ export function PopularContents() {
                   </div>
 
                   {/* CTA Button */}
-                  <button className="w-full flex items-center justify-center space-x-2 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium rounded-xl transition-all duration-300 group-hover:shadow-lg">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/content/${content.id}`);
+                    }}
+                    className="w-full flex items-center justify-center space-x-2 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium rounded-xl transition-all duration-300 group-hover:shadow-lg"
+                  >
                     <span>촬영지 보기</span>
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
