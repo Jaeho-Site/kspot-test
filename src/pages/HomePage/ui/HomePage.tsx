@@ -12,22 +12,13 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
       <HeroSection />
-
-      {/* Category Selector */}
       <CategorySelector
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
       />
-
-      {/* Popular Contents */}
       <PopularContents />
-
-      {/* Busan Spotlight */}
       <BusanSpotlight />
-
-      {/* Travel Guide */}
       <TravelGuide />
     </div>
   );

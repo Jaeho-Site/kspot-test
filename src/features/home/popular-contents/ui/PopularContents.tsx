@@ -75,18 +75,6 @@ const POPULAR_CONTENTS = [
     description: "아이돌과 평범한 대학생의 로맨스",
     places: ["홍대 놀이터", "연남동", "망원동", "한강 뚝섬"],
   },
-  {
-    id: 7,
-    title: "강남스타일",
-    category: "K-Pop",
-    image: "/assets/k-pop-gangnamstyle.webp",
-    rating: 9.5,
-    locations: 6,
-    duration: "3:39",
-    viewers: "5B",
-    description: "K-POP을 세계에 알린 기념비적인 뮤직비디오",
-    places: ["강남역", "도곡동", "서초구", "올림픽공원"],
-  },
 ];
 
 export function PopularContents() {
