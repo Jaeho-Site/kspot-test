@@ -3,8 +3,6 @@ import {
   Utensils,
   Camera,
   Users,
-  Clock,
-  Star,
   ArrowRight,
   Phone,
   Globe,
