@@ -22,6 +22,7 @@ interface ContentHeroProps {
   onBack?: () => void;
   onShare?: () => void;
   onLike?: () => void;
+  onMapView?: () => void;
   isLiked?: boolean;
 }
 
@@ -38,6 +39,7 @@ export function ContentHero({
   onBack,
   onShare,
   onLike,
+  onMapView,
   isLiked = false,
 }: ContentHeroProps) {
   return (
@@ -128,10 +130,19 @@ export function ContentHero({
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="px-8 py-4 bg-white text-gray-900 font-semibold rounded-full hover:bg-gray-100 transition-colors shadow-lg">
+            <button 
+              onClick={() => {
+                const element = document.getElementById('location-grid');
+                element?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="px-8 py-4 bg-white text-gray-900 font-semibold rounded-full hover:bg-gray-100 transition-colors shadow-lg"
+            >
               촬영지 보기
             </button>
-            <button className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-full hover:bg-white/30 transition-colors border border-white/20">
+            <button 
+              onClick={onMapView}
+              className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-full hover:bg-white/30 transition-colors border border-white/20"
+            >
               지도에서 보기
             </button>
           </div>

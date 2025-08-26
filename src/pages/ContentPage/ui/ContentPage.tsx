@@ -132,6 +132,10 @@ export function ContentPage() {
     navigate("/map");
   };
 
+  const handleContentMapView = () => {
+    navigate("/map");
+  };
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -140,6 +144,7 @@ export function ContentPage() {
         onBack={handleBack}
         onShare={handleShare}
         onLike={handleLike}
+        onMapView={handleContentMapView}
         isLiked={isLiked}
       />
 

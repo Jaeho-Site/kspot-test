@@ -5,6 +5,9 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  define: {
+    __KAKAO_MAP_API_KEY__: JSON.stringify(process.env.VITE_KAKAO_MAP_API_KEY),
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
