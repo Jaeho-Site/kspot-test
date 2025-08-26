@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MapPin, Star, Clock, Camera, Navigation, Filter } from "lucide-react";
 import { OptimizedImage } from "@/shared/ui";
 
@@ -23,6 +23,7 @@ interface LocationSidebarProps {
   selectedLocationId?: number;
   onLocationSelect: (location: Location) => void;
   onGetDirections?: (location: Location) => void;
+  onFilteredLocationsChange?: (locationIds: number[]) => void;
 }
 
 export function LocationSidebar({
@@ -30,23 +31,44 @@ export function LocationSidebar({
   selectedLocationId,
   onLocationSelect,
   onGetDirections,
+  onFilteredLocationsChange,
 }: LocationSidebarProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterTag, setFilterTag] = useState<string | null>(null);
 
-  // 모든 태그 추출
-  const allTags = Array.from(
-    new Set(locations.flatMap((location) => location.tags))
-  );
-
-  // 필터링된 위치들
+  // 필터링된 위치들 - 이름, 주소, 태그, 장면 설명에서 검색
   const filteredLocations = locations.filter((location) => {
-    const matchesSearch = location.name
+    const searchLower = searchTerm.toLowerCase();
+    const matchesName = location.name.toLowerCase().includes(searchLower);
+    const matchesAddress = location.address.toLowerCase().includes(searchLower);
+    const matchesDescription = location.description
       .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesFilter = !filterTag || location.tags.includes(filterTag);
-    return matchesSearch && matchesFilter;
+      .includes(searchLower);
+    const matchesScene = location.sceneDescription
+      .toLowerCase()
+      .includes(searchLower);
+    const matchesTags = location.tags.some((tag) =>
+      tag.toLowerCase().includes(searchLower)
+    );
+
+    // "오징어게임", "오징어 게임" 등 다양한 검색어 처리
+    const isSquidGameSearch =
+      searchLower.includes("오징어") || searchLower.includes("게임");
+
+    return (
+      matchesName ||
+      matchesAddress ||
+      matchesDescription ||
+      matchesScene ||
+      matchesTags ||
+      isSquidGameSearch
+    );
   });
+
+  // 필터링된 결과가 변경될 때마다 부모 컴포넌트에 알림
+  useEffect(() => {
+    const filteredIds = filteredLocations.map((location) => location.id);
+    onFilteredLocationsChange?.(filteredIds);
+  }, [filteredLocations, onFilteredLocationsChange]);
 
   return (
     <div className="w-full lg:w-96 bg-white shadow-xl rounded-2xl overflow-hidden">
@@ -58,13 +80,12 @@ export function LocationSidebar({
         </p>
       </div>
 
-      {/* Search & Filter */}
+      {/* Search */}
       <div className="p-4 border-b border-gray-200">
-        {/* Search */}
-        <div className="relative mb-4">
+        <div className="relative">
           <input
             type="text"
-            placeholder="촬영지 검색..."
+            placeholder="촬영지 검색... (예: 오징어게임, 대한봉진학교)"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
@@ -72,32 +93,19 @@ export function LocationSidebar({
           <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
         </div>
 
-        {/* Filter Tags */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setFilterTag(null)}
-            className={`px-3 py-1 text-xs rounded-full transition-colors ${
-              !filterTag
-                ? "bg-purple-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            전체
-          </button>
-          {allTags.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => setFilterTag(filterTag === tag ? null : tag)}
-              className={`px-3 py-1 text-xs rounded-full transition-colors ${
-                filterTag === tag
-                  ? "bg-purple-600 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
+        {/* Search Hints */}
+        {searchTerm.length === 0 && (
+          <div className="mt-2 text-xs text-gray-500">
+            💡 팁: "오징어게임"으로 검색하면 모든 촬영지가 표시됩니다
+          </div>
+        )}
+
+        {/* Search Results Count */}
+        {searchTerm.length > 0 && (
+          <div className="mt-2 text-xs text-purple-600">
+            "{searchTerm}" 검색 결과: {filteredLocations.length}개
+          </div>
+        )}
       </div>
 
       {/* Location List */}
@@ -134,7 +142,7 @@ export function LocationSidebar({
                 <h3 className="font-bold text-gray-900 mb-1 truncate">
                   {location.name}
                 </h3>
-                
+
                 <div className="flex items-center text-gray-500 text-sm mb-2">
                   <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
                   <span className="truncate">{location.address}</span>
@@ -144,7 +152,9 @@ export function LocationSidebar({
                 <div className="bg-purple-50 rounded-lg p-2 mb-2">
                   <div className="flex items-center space-x-1 mb-1">
                     <Camera className="w-3 h-3 text-purple-600" />
-                    <span className="text-xs font-medium text-purple-700">촬영 장면</span>
+                    <span className="text-xs font-medium text-purple-700">
+                      촬영 장면
+                    </span>
                   </div>
                   <p className="text-xs text-purple-600 line-clamp-2">
                     {location.sceneDescription}
@@ -211,12 +221,42 @@ export function LocationSidebar({
           </div>
         ))}
 
-        {filteredLocations.length === 0 && (
+        {filteredLocations.length === 0 && searchTerm.length > 0 && (
           <div className="p-8 text-center text-gray-500">
             <Filter className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <p className="text-sm">검색 결과가 없습니다</p>
+            <p className="text-sm">"{searchTerm}" 검색 결과가 없습니다</p>
+            <div className="text-xs text-gray-400 mt-2 space-y-1">
+              <p>💡 추천 검색어:</p>
+              <div className="flex flex-wrap justify-center gap-1 mt-1">
+                <button
+                  onClick={() => setSearchTerm("오징어게임")}
+                  className="px-2 py-1 bg-purple-100 text-purple-600 rounded text-xs hover:bg-purple-200"
+                >
+                  오징어게임
+                </button>
+                <button
+                  onClick={() => setSearchTerm("대한봉진학교")}
+                  className="px-2 py-1 bg-purple-100 text-purple-600 rounded text-xs hover:bg-purple-200"
+                >
+                  대한봉진학교
+                </button>
+                <button
+                  onClick={() => setSearchTerm("강남역")}
+                  className="px-2 py-1 bg-purple-100 text-purple-600 rounded text-xs hover:bg-purple-200"
+                >
+                  강남역
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {filteredLocations.length === 0 && searchTerm.length === 0 && (
+          <div className="p-8 text-center text-gray-500">
+            <div className="text-4xl mb-4">🎬</div>
+            <p className="text-sm">오징어 게임 촬영지를 검색해보세요</p>
             <p className="text-xs text-gray-400 mt-1">
-              다른 검색어를 시도해보세요
+              위 검색창에 "오징어게임"을 입력해보세요
             </p>
           </div>
         )}

@@ -26,9 +26,15 @@ interface KakaoMapProps {
   locations: Location[];
   onLocationSelect?: (location: Location) => void;
   selectedLocationId?: number;
+  filteredLocationIds?: number[];
 }
 
-export function KakaoMap({ locations, onLocationSelect, selectedLocationId }: KakaoMapProps) {
+export function KakaoMap({
+  locations,
+  onLocationSelect,
+  selectedLocationId,
+  filteredLocationIds,
+}: KakaoMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
   const [markers, setMarkers] = useState<any[]>([]);
@@ -55,30 +61,25 @@ export function KakaoMap({ locations, onLocationSelect, selectedLocationId }: Ka
         location.coordinates.lng
       );
 
-      // 커스텀 마커 이미지 생성
-      const markerImageSrc = '/marker-squidgame.png'; // 오징어 게임 마커 이미지
-      const markerImageSize = new kakao.maps.Size(40, 50);
-      const markerImageOption = { offset: new kakao.maps.Point(20, 50) };
-
-      // 마커 이미지가 없으면 기본 마커 사용
-      let markerImage;
-      try {
-        markerImage = new kakao.maps.MarkerImage(
-          markerImageSrc,
-          markerImageSize,
-          markerImageOption
-        );
-      } catch (error) {
-        markerImage = null; // 기본 마커 사용
-      }
-
+      // 기본 빨간색 마커 사용 (카카오맵 기본 제공)
       const marker = new kakao.maps.Marker({
         position: markerPosition,
-        image: markerImage,
         title: location.name,
       });
 
       marker.setMap(mapInstance);
+
+      // 마커의 투명도 설정 (필터링된 결과가 있을 때)
+      if (filteredLocationIds && filteredLocationIds.length > 0) {
+        const isFiltered = filteredLocationIds.includes(location.id);
+        if (!isFiltered) {
+          // 필터링되지 않은 마커는 투명하게 처리
+          const markerElement = marker.getContent();
+          if (markerElement) {
+            markerElement.style.opacity = "0.3";
+          }
+        }
+      }
 
       // 인포윈도우 생성
       const infowindowContent = `
@@ -137,7 +138,7 @@ export function KakaoMap({ locations, onLocationSelect, selectedLocationId }: Ka
       });
 
       // 마커 클릭 이벤트
-      kakao.maps.event.addListener(marker, 'click', () => {
+      kakao.maps.event.addListener(marker, "click", () => {
         // 다른 인포윈도우들 닫기
         markers.forEach((m) => {
           if (m.infowindow) {
@@ -161,7 +162,12 @@ export function KakaoMap({ locations, onLocationSelect, selectedLocationId }: Ka
     // 지도 범위 재설정
     const bounds = new kakao.maps.LatLngBounds();
     locations.forEach((location) => {
-      bounds.extend(new kakao.maps.LatLng(location.coordinates.lat, location.coordinates.lng));
+      bounds.extend(
+        new kakao.maps.LatLng(
+          location.coordinates.lat,
+          location.coordinates.lng
+        )
+      );
     });
     mapInstance.setBounds(bounds);
 
@@ -197,7 +203,7 @@ export function KakaoMap({ locations, onLocationSelect, selectedLocationId }: Ka
         )
       );
       map.setLevel(3); // 확대
-      
+
       // 인포윈도우 열기
       markers.forEach((m) => {
         if (m.infowindow) {
@@ -210,11 +216,11 @@ export function KakaoMap({ locations, onLocationSelect, selectedLocationId }: Ka
 
   return (
     <div className="relative w-full h-full">
-      <div 
-        ref={mapContainer} 
+      <div
+        ref={mapContainer}
         className="w-full h-full rounded-2xl overflow-hidden shadow-lg"
       />
-      
+
       {/* 지도 로딩 실패시 메시지 */}
       {!window.kakao && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-2xl">

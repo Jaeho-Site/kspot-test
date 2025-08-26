@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Share2, Download, RotateCcw } from "lucide-react";
-import { KakaoMap, LocationSidebar, MapLegend } from "@/features/map/location-map";
+import {
+  KakaoMap,
+  LocationSidebar,
+  MapLegend,
+} from "@/features/map/location-map";
 
 // 오징어 게임 촬영지 데이터
 const squidGameLocations = [
@@ -62,8 +66,11 @@ const squidGameLocations = [
 
 export function MapPage() {
   const navigate = useNavigate();
-  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(
+    null
+  );
   const [showSidebar, setShowSidebar] = useState(true);
+  const [filteredLocationIds, setFilteredLocationIds] = useState<number[]>([]);
 
   const handleLocationSelect = (location: any) => {
     setSelectedLocationId(location.id);
@@ -94,6 +101,11 @@ export function MapPage() {
 
   const handleReset = () => {
     setSelectedLocationId(null);
+    setFilteredLocationIds([]);
+  };
+
+  const handleFilteredLocationsChange = (locationIds: number[]) => {
+    setFilteredLocationIds(locationIds);
   };
 
   return (
@@ -161,9 +173,10 @@ export function MapPage() {
           <div className="w-full lg:w-96 lg:flex-shrink-0 border-r border-gray-200 overflow-hidden">
             <LocationSidebar
               locations={squidGameLocations}
-              selectedLocationId={selectedLocationId}
+              selectedLocationId={selectedLocationId ?? undefined}
               onLocationSelect={handleLocationSelect}
               onGetDirections={handleGetDirections}
+              onFilteredLocationsChange={handleFilteredLocationsChange}
             />
           </div>
         )}
@@ -173,7 +186,8 @@ export function MapPage() {
           <KakaoMap
             locations={squidGameLocations}
             onLocationSelect={handleLocationSelect}
-            selectedLocationId={selectedLocationId}
+            selectedLocationId={selectedLocationId ?? undefined}
+            filteredLocationIds={filteredLocationIds}
           />
 
           {/* Legend - 데스크톱에서만 표시 */}
@@ -191,7 +205,9 @@ export function MapPage() {
             <button
               onClick={() => {
                 // 모바일에서 범례 모달 열기
-                alert("범례 정보:\n• 📍 4개 촬영지\n• ⭐ 평균 4.6점\n• ⏱️ 2-3시간 소요");
+                alert(
+                  "범례 정보:\n• 📍 4개 촬영지\n• ⭐ 평균 4.6점\n• ⏱️ 2-3시간 소요"
+                );
               }}
               className="p-3 bg-white hover:bg-gray-50 rounded-full shadow-lg transition-colors"
               title="범례 보기"
