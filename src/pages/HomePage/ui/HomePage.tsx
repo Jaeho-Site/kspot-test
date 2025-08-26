@@ -13,11 +13,11 @@ export function HomePage() {
   return (
     <div className="min-h-screen">
       <HeroSection />
+      <PopularContents />
       <CategorySelector
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
       />
-      <PopularContents />
       <BusanSpotlight />
       <TravelGuide />
     </div>
