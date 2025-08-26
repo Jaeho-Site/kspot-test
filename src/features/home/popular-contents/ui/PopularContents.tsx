@@ -6,7 +6,7 @@ const POPULAR_CONTENTS = [
     id: 1,
     title: "오징어 게임",
     category: "K-Drama",
-    image: "/assets/k-drama-squidgame.webp",
+    image: "/assets/k-drama-squidgame-horizontal.jpg",
     rating: 9.2,
     locations: 12,
     duration: "456분",
@@ -18,7 +18,7 @@ const POPULAR_CONTENTS = [
     id: 2,
     title: "BTS",
     category: "K-Pop",
-    image: "/assets/k-pop-bts.webp",
+    image: "/assets/k-pop-bts-horizontal.jpg",
     rating: 9.8,
     locations: 25,
     duration: "∞",
@@ -30,7 +30,7 @@ const POPULAR_CONTENTS = [
     id: 3,
     title: "신과함께",
     category: "K-Movie",
-    image: "/assets/k-movie-withGod.webp",
+    image: "/assets/k-movie-withGod-horizontal.jpg",
     rating: 8.7,
     locations: 18,
     duration: "139분",
@@ -43,7 +43,7 @@ const POPULAR_CONTENTS = [
     id: 4,
     title: "이태원 클라쓰",
     category: "K-Drama",
-    image: "/assets/k-drama-itaewonClass.webp",
+    image: "/assets/k-drama-itaewonClass-horizontal.jpg",
     rating: 8.9,
     locations: 15,
     duration: "960분",
@@ -55,7 +55,7 @@ const POPULAR_CONTENTS = [
     id: 5,
     title: "더 글로리",
     category: "K-Drama",
-    image: "/assets/k-drama-theglory.webp",
+    image: "/assets/k-drama-theglory-horizontal.jpg",
     rating: 8.5,
     locations: 10,
     duration: "540분",
@@ -67,7 +67,7 @@ const POPULAR_CONTENTS = [
     id: 6,
     title: "두나!",
     category: "K-Drama",
-    image: "/assets/k-drama-doona.webp",
+    image: "/assets/k-drama-doona-horizontal.jpg",
     rating: 8.3,
     locations: 8,
     duration: "450분",
@@ -129,11 +129,12 @@ export function PopularContents() {
               {/* Card */}
               <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden">
                 {/* Image Container */}
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-48 overflow-hidden">
                   <img
                     src={content.image}
                     alt={content.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
+                    loading="lazy"
                   />
 
                   {/* Gradient Overlay */}

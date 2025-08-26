@@ -6,7 +6,7 @@ const BUSAN_CONTENTS = [
     id: 1,
     title: "신과함께",
     type: "K-Movie",
-    image: "/assets/k-movie-withGod.webp",
+    image: "/assets/k-movie-withGod-horizontal.jpg",
     locations: [
       {
         name: "해운대해수욕장",
@@ -32,7 +32,7 @@ const BUSAN_CONTENTS = [
     id: 2,
     title: "범죄도시",
     type: "K-Movie",
-    image: "/assets/k-movie-withGod.webp", // 임시로 같은 이미지 사용
+    image: "/assets/k-movie-withGod-horizontal.jpg", // 임시로 같은 이미지 사용
     locations: [
       {
         name: "국제시장",
@@ -230,7 +230,8 @@ export function BusanSpotlight() {
               <img
                 src={currentContent.image}
                 alt={currentContent.title}
-                className="w-full h-96 object-cover"
+                className="w-full h-96 object-cover object-center"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 

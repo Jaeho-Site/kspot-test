@@ -1,30 +1,31 @@
 import { useState, useEffect } from "react";
 import { Play, MapPin, Star } from "lucide-react";
+import { OptimizedImage } from "@/shared/ui";
 
 const HERO_IMAGES = [
   {
-    src: "/assets/k-drama-squidgame.webp",
+    src: "/assets/k-drama-squidgame-horizontal.jpg",
     title: "오징어 게임",
     subtitle: "전 세계를 사로잡은 K-드라마",
     location: "대한민국 서울",
     category: "K-Drama",
   },
   {
-    src: "/assets/k-pop-bts.webp",
+    src: "/assets/k-pop-bts-horizontal.jpg",
     title: "BTS",
     subtitle: "세계를 움직이는 K-POP",
     location: "대한민국 전국",
     category: "K-Pop",
   },
   {
-    src: "/assets/k-movie-withGod.webp",
+    src: "/assets/k-movie-withGod-horizontal.jpg",
     title: "신과함께",
     subtitle: "한국 영화의 새로운 지평",
     location: "대한민국 부산",
     category: "K-Movie",
   },
   {
-    src: "/assets/k-drama-itaewonClass.webp",
+    src: "/assets/k-drama-itaewonClass-horizontal.jpg",
     title: "이태원 클라쓰",
     subtitle: "젊음과 꿈이 살아있는 이태원",
     location: "서울 이태원",
@@ -65,10 +66,12 @@ export function HeroSection() {
               index === currentSlide ? "opacity-100" : "opacity-0"
             }`}
           >
-            <img
+            <OptimizedImage
               src={image.src}
               alt={image.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full"
+              loading={index === 0 ? "eager" : "lazy"}
+              objectPosition="center"
             />
             <div className="absolute inset-0 bg-black/40" />
           </div>
@@ -152,7 +155,8 @@ export function HeroSection() {
             <img
               src={image.src}
               alt={image.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
+              loading="lazy"
             />
           </button>
         ))}
